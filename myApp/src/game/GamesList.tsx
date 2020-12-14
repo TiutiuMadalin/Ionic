@@ -9,31 +9,41 @@ import {
   IonList, IonLoading,
   IonPage,
   IonTitle,
-  IonToolbar
+  IonToolbar,
+  IonButton,
+  IonInfiniteScroll,
+  IonInfiniteScrollContent
 } from '@ionic/react';
-import { add } from 'ionicons/icons';
+import {add} from 'ionicons/icons';
 import Game from './Game';
 import { getLogger } from '../core';
 import { GameContext } from './GameProvider';
+import {AuthContext} from "../auth";
 
 const log = getLogger('GamesList');
 
 const GamesList: React.FC<RouteComponentProps> = ({ history }) => {
-  const { games, fetching, fetchingError } = useContext(GameContext);
+  let { games, fetching, fetchingError,getNext,disableInfiniteScroll } = useContext(GameContext);
+  const{logout}=useContext(AuthContext);
+  const handleLogout= ()=>{
+    logout?.();
+  }
   log('rendering List');
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Games</IonTitle>
+          <IonTitle>Games
+            <IonButton onClick={handleLogout}>Logout</IonButton>
+          </IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent>
         <IonLoading isOpen={fetching} message="Fetching items" />
         {games && (
           <IonList>
-            {games.map(({ id, title ,releaseDate ,version}) =>
-                <Game key={id} id={id} title={title} releaseDate={releaseDate} version={version} onEdit={id => history.push(`/game/${id}`)} />)}
+            {games.map(({ _id, title ,releaseDate ,version}) =>
+                <Game key={_id} _id={_id} title={title} releaseDate={releaseDate} version={version} onEdit={_id => history.push(`/game/${_id}`)} />)}
           </IonList>
         )}
         {fetchingError && (
@@ -44,6 +54,12 @@ const GamesList: React.FC<RouteComponentProps> = ({ history }) => {
             <IonIcon icon={add} />
           </IonFabButton>
         </IonFab>
+        <IonInfiniteScroll threshold="100px" disabled={disableInfiniteScroll}
+                           onIonInfinite={(e: CustomEvent<void>) => getNext?.(e, games)}>
+          <IonInfiniteScrollContent
+              loadingText="Loading more Posts">
+          </IonInfiniteScrollContent>
+        </IonInfiniteScroll>
       </IonContent>
     </IonPage>
   );

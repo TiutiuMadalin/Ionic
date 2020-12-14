@@ -30,7 +30,7 @@ const GameEdit: React.FC<GameEditProps> = ({ history, match }) => {
     useEffect(() => {
         log('useEffect');
         const routeId = match.params.id || '';
-        const game = games?.find(it => it.id === routeId);
+        const game = games?.find(it => it._id === routeId);
         setGame(game);
         if (game) {
             setTitle(game.title);
@@ -38,6 +38,7 @@ const GameEdit: React.FC<GameEditProps> = ({ history, match }) => {
         }
     }, [match.params.id, games]);
     const handleSave = () => {
+
         const editedGame = game ? { ...game, title, version } : { title: title, version: version };
         saveGame && saveGame(editedGame).then(() => history.goBack());
     };

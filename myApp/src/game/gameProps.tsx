@@ -1,5 +1,5 @@
 export interface gameProps {
-    id?: string;
+    _id?: string;
     title: string;
     releaseDate?: string;
     version :string;

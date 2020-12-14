@@ -23,19 +23,25 @@ import '@ionic/react/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 import { GameProvider } from './game/GameProvider';
+import { AuthProvider, Login, PrivateRoute } from './auth';
 
 const App: React.FC = () => (
     <IonApp>
-        <GameProvider>
+
         <IonReactRouter>
             <IonRouterOutlet>
-                <Route path="/games" component={GameList} exact={true} />
-                <Route path="/game" component={GameEdit} exact={true} />
-                <Route path="/game/:id" component={GameEdit} exact={true} />
-                <Route exact path="/" render={() => <Redirect to="/games" />} />
+                <AuthProvider>
+                    <Route path="/login" component={Login} exact={true}/>
+                <GameProvider>
+                    <PrivateRoute path="/games" component={GameList} exact={true} />
+                    <PrivateRoute path="/game" component={GameEdit} exact={true} />
+                    <PrivateRoute path="/game/:id" component={GameEdit} exact={true} />
+                </GameProvider>
+                    <Route exact path="/" render={() => <Redirect to="/games" />} />
+                </AuthProvider>
             </IonRouterOutlet>
         </IonReactRouter>
-        </GameProvider>
+
     </IonApp>
 );
 
